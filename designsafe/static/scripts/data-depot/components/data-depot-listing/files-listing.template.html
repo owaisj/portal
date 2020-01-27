@@ -23,6 +23,7 @@
                         </span>
                         <span ng-if="!$ctrl._ui.showSelect">Name</span>
                     </th>
+                    <th>Open in WS</th>
                     <th>Size</th>
                     <th>Last modified</th>
                 </tr>
@@ -68,6 +69,12 @@
                                 <i class="fa fa-spinner fa-spin">&nbsp;</i> Loading ...
                             </div>
                         </div>
+                    </td>
+                    <td>
+                        {{ $ctrl.debug(item) }}
+                        <a ng-if='item.format === "raw"' href='$ctrl.launchWS()' target='_blank'>
+                            Open in WS
+                        </a>
                     </td>
                     <td data-ng-if="item.format== 'folder'">--</td>
                     <td data-ng-if="item.format== 'raw'">{{ item.length|bytes }}</td>

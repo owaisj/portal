@@ -2,8 +2,9 @@ import _ from 'underscore';
 import FilesListingTemplate from './files-listing.template.html';
 import PublicationsListingTemplate from './publications-listing.template.html';
 
+/* eslint-disable */ // TODO: Remove this
 class FilesListingCtrl {
-    constructor($state, DataBrowserService, $stateParams, $uibModal){
+    constructor($state, DataBrowserService, $stateParams, $uibModal) {
         'ngInject';
         this.$state = $state;
         this.DataBrowserService = DataBrowserService;
@@ -40,9 +41,11 @@ class FilesListingCtrl {
                 this.breadcrumbs = path.split('/');
             }
 
-            if (system === 'designsafe.storage.default' ||
+            if (
+                system === 'designsafe.storage.default' ||
                 system === 'designsafe.storage.published' ||
-                system === 'nees.public') {
+                system === 'nees.public'
+            ) {
                 this.breadcrumbs.shift();
             }
         };
@@ -54,6 +57,7 @@ class FilesListingCtrl {
                 this.bread(this.browser.listing.path, this.browser.listing.system);
                 return this.browser.listing;
             }
+            return null;
         };
     }
 
@@ -68,7 +72,9 @@ class FilesListingCtrl {
         let version = 1;
         for (var i = 0; i < this.breadcrumbs.length; i++) {
             filePath = filePath.concat(this.breadcrumbs[i] + '/');
-            if (this.breadcrumbs[i] === path) { break; }
+            if (this.breadcrumbs[i] === path) {
+                break;
+            }
         }
         return this.$state.go(
             stateName,
@@ -76,7 +82,7 @@ class FilesListingCtrl {
                 systemId: systemId,
                 filePath: filePath,
                 version: version,
-                query_string: null
+                query_string: null,
             },
             { reload: true }
         );
@@ -98,9 +104,7 @@ class FilesListingCtrl {
             filePath = file.path;
         }
         if (file.type !== 'dir' && file.type !== 'folder') {
-            return this.DataBrowserService.preview(
-                file, this.browser.listing
-            );
+            return this.DataBrowserService.preview(file, this.browser.listing);
         }
         let version = 1;
         if (file.system === 'nees.public') {
@@ -117,19 +121,19 @@ class FilesListingCtrl {
                 systemId: systemId,
                 filePath: filePath,
                 version: version,
-                query_string: null
+                query_string: null,
             },
             { reload: true }
         );
     }
 
-    selectAll () {
+    selectAll() {
         let deselect = false;
         this.listing().children.forEach((file) => {
             if (typeof file._ui === 'undefined') {
-                file._ui = {selected: false};
+                file._ui = { selected: false };
             }
-            if (file._ui.selected === true){
+            if (file._ui.selected === true) {
                 deselect = true;
             }
         });
@@ -159,14 +163,15 @@ class FilesListingCtrl {
     }
 
     scrollToBottom() {
-        return this.DataBrowserService.scrollToBottom({queryString: this.$stateParams.query_string, typeFilters: this.$stateParams.typeFilters,});
+        return this.DataBrowserService.scrollToBottom({
+            queryString: this.$stateParams.query_string,
+            typeFilters: this.$stateParams.typeFilters,
+        });
     }
 
     renderName(file) {
-        if (typeof file.metadata === 'undefined' ||
-            file.metadata === null ||
-            _.isEmpty(file.metadata)){
-            if(file.meta && file.meta.title){
+        if (typeof file.metadata === 'undefined' || file.metadata === null || _.isEmpty(file.metadata)) {
+            if (file.meta && file.meta.title) {
                 return file.meta.title;
             }
             return file.name;
@@ -175,9 +180,7 @@ class FilesListingCtrl {
         const experiment_re = /^experiment/;
         if (file.path[0] === '/' && pathComps.length === 2) {
             return file.metadata.project.title;
-        } else if (file.path[0] !== '/' &&
-                 pathComps.length === 2 &&
-                 experiment_re.test(file.name.toLowerCase())){
+        } else if (file.path[0] !== '/' && pathComps.length === 2 && experiment_re.test(file.name.toLowerCase())) {
             return file.metadata.experiments[0].title;
         }
         return file.name;
@@ -185,63 +188,72 @@ class FilesListingCtrl {
 
     onMetadata($event, file) {
         $event.stopPropagation();
-        this.DataBrowserService.viewMetadata(
-            [file],
-            this.browser.listing
-        );
+        this.DataBrowserService.viewMetadata([file], this.browser.listing);
     }
 
     getType(meta) {
         if (typeof meta.dataType != 'undefined' && meta.dataType != 'None') {
             return meta.dataType;
-        } else {
-            if (meta.type === 'field_recon') {
-                return 'Field Research';
-            }
-            if (meta.type === 'hybrid_simulation') {
-                return 'Hybrid Simulation';
-            }
-            return meta.type;
         }
+        if (meta.type === 'field_recon') {
+            return 'Field Research';
+        }
+        if (meta.type === 'hybrid_simulation') {
+            return 'Hybrid Simulation';
+        }
+        return meta.type;
     }
 
     showDescription(title, description) {
         var modal = this.$uibModal.open({
-          component: 'publicationDescriptionModalComponent',
-          resolve: {
-            title: () => title,
-            description: () => description,
-          },
-          size: 'lg'
+            component: 'publicationDescriptionModalComponent',
+            resolve: {
+                title: () => title,
+                description: () => description,
+            },
+            size: 'lg',
         });
-      }
+    }
 
-      onTypeFilterSelect(typeFilter) {
+    onTypeFilterSelect(typeFilter) {
         //Need to handle typeFilters being array, string, or undefined
-        let typeFilters = this.$stateParams.typeFilters || [] 
-        typeFilters = [typeFilters].flat()
+        let typeFilters = this.$stateParams.typeFilters || [];
+        typeFilters = [typeFilters].flat();
 
         if (typeFilters.includes(typeFilter)) {
-            typeFilters = typeFilters.filter(x => x != typeFilter)
-        }
-        else {
-            typeFilters.push(typeFilter)
+            typeFilters = typeFilters.filter((x) => x != typeFilter);
+        } else {
+            typeFilters.push(typeFilter);
         }
         if (typeFilters.length === 0) {
-            typeFilters = null
+            typeFilters = null;
         }
-        this.$state.go(this.$state.current, {typeFilters: typeFilters}, {reload: true})
-      }
+        this.$state.go(this.$state.current, { typeFilters: typeFilters }, { reload: true });
+    }
 
-      checkTypeFilterSelected(typeFilter) {
-        let typeFilters = this.$stateParams.typeFilters || [] 
-        typeFilters = [typeFilters].flat()
-        return typeFilters.includes(typeFilter)
-      }
+    checkTypeFilterSelected(typeFilter) {
+        let typeFilters = this.$stateParams.typeFilters || [];
+        typeFilters = [typeFilters].flat();
+        return typeFilters.includes(typeFilter);
+    }
 
-      clearTypeFilters() {
-        this.$state.go(this.$state.current, {typeFilters: null}, {reload: true})
-      }
+    clearTypeFilters() {
+        this.$state.go(this.$state.current, { typeFilters: null }, { reload: true });
+    }
+
+    /**
+    * Takes file format and returns link to open workspace with appropriate application
+    * The return value is 'baz' in all cases.
+    * @param {String} format File format
+    * @return {String} url to open link in the Discovery Workspace
+    */
+    launchWS(format) {
+        return '/rw/workspace/';
+    }
+    debug(value) {
+        this.launchWS();
+        console.log(value);
+    }
 }
 
 export const FilesListingComponent = {
