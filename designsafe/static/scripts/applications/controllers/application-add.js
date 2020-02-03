@@ -1,3 +1,4 @@
+/* eslint-disable */
 export function applicationAddCtrl(window, angular, $, _) {
     'ngInject';
     angular.module('designsafe').controller('ApplicationAddCtrl',
@@ -1805,7 +1806,7 @@ export function applicationAddCtrl(window, angular, $, _) {
                 AppsWizard.activateTab($scope, --$scope.currentTabIndex);
             };
 
-            $scope.wizview = 'split';
+            $scope.wizview = 'code';
 
             $scope.updateWizardLayout = function() {
             };
